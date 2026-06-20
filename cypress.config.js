@@ -3,10 +3,13 @@ const cypressEnv = require("./cypress.env.json");
 
 module.exports = defineConfig({
   // Variáveis de ambiente acessíveis via Cypress.env('...').
-  // O valor da apiKey é importado do arquivo cypress.env.json.
-  // Pode ser sobrescrita em CI/local com a variável CYPRESS_apiKey=<valor>.
+  // - apiKey: importada de cypress.env.json (sobrescreva com CYPRESS_apiKey=<valor>).
+  // - apiUrl: URL base da API (reqres.in), prefixada pelo comando cy.apiRequest.
+  // - e2eUrl: URL base da aplicação E2E (SauceDemo), usada nos testes de UI.
   env: {
     apiKey: cypressEnv.apiKey,
+    apiUrl: "https://reqres.in",
+    e2eUrl: "https://www.saucedemo.com/",
   },
 
   // Timeouts maiores por se tratar de chamadas a uma API real.
@@ -25,7 +28,6 @@ module.exports = defineConfig({
   screenshotOnRunFailure: false,
 
   e2e: {
-    baseUrl: "https://reqres.in",
     specPattern: "cypress/tests/**/*.cy.{js,jsx,ts,tsx}",
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents(on, config) {

@@ -6,7 +6,8 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "test": "cypress run",
-    "test:api": "cypress run --spec \"cypress/e2e/API/**/*.cy.js\""
+    "test:api": "cypress run --spec \"cypress/tests/API/**/*.cy.js\"",
+    "test:e2e": "cypress run --spec \"cypress/tests/E2E/**/*.cy.js\""
   },
   "keywords": [],
   "author": "",
