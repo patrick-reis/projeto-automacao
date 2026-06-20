@@ -38,9 +38,8 @@ npm run test:api     # executa apenas os testes da pasta cypress/e2e/API
 
 - **`baseUrl` e variáveis de ambiente** centralizadas em `cypress.config.js`
   (a API key pode ser sobrescrita via `CYPRESS_apiKey=<valor>`).
-- **Comando customizado `cy.apiRequest`** que injeta autenticação, não falha por
-  status code (permitindo asserts negativos) e reexecuta automaticamente em
-  caso de **HTTP 429 (rate limit)**.
+- **Comando customizado `cy.apiRequest`** que injeta autenticação e não falha por
+  status code (permitindo asserts negativos).
 - **Cenários positivos e negativos**: entradas válidas, campos ausentes, payload
   malformado, autenticação ausente/ inválida e método HTTP inválido.
 - **Validação completa da resposta**: status code, headers e corpo.

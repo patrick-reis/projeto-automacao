@@ -15,7 +15,7 @@ declare namespace Cypress {
      * Wrapper de `cy.request` para testes de API.
      * - Injeta o header `x-api-key` automaticamente (desative com `auth: false`).
      * - Usa `failOnStatusCode: false` para permitir asserts de status de erro.
-     * - Reexecuta automaticamente em caso de HTTP 429 (rate limit).
+     * - Headers passados manualmente têm prioridade sobre o injetado.
      */
     apiRequest(options: ApiRequestOptions): Chainable<Cypress.Response<any>>
   }

@@ -26,7 +26,7 @@ module.exports = defineConfig({
 
   e2e: {
     baseUrl: "https://reqres.in",
-    specPattern: "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
+    specPattern: "cypress/tests/**/*.cy.{js,jsx,ts,tsx}",
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents(on, config) {
       // Local para listeners de eventos do Node, se necessário.

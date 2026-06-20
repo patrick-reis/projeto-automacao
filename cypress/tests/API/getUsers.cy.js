@@ -60,8 +60,8 @@ describe('GET /api/users - Listagem e consulta de usuários', () => {
   })
 
   context('Cenários negativos', () => {
-    it('deve retornar 404 ao consultar um usuário inexistente (id = 23)', () => {
-      cy.apiRequest({ method: 'GET', url: ENDPOINTS.userById(23) }).then((res) => {
+    it('deve retornar 404 ao consultar um usuário inexistente (id = 999)', () => {
+      cy.apiRequest({ method: 'GET', url: ENDPOINTS.userById(999) }).then((res) => {
         expect(res.status, 'status code').to.eq(404)
         expect(res.body, 'corpo vazio').to.be.empty
       })
