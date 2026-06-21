@@ -1,5 +1,6 @@
 const { defineConfig } = require("cypress");
 const cypressEnv = require("./cypress.env.json");
+const cucumber = require("cypress-cucumber-preprocessor").default;
 
 module.exports = defineConfig({
   // Variáveis de ambiente acessíveis via Cypress.env('...').
@@ -12,26 +13,27 @@ module.exports = defineConfig({
     e2eUrl: "https://www.saucedemo.com/",
   },
 
-  // Timeouts maiores por se tratar de chamadas a uma API real.
   defaultCommandTimeout: 10000,
   requestTimeout: 20000,
   responseTimeout: 20000,
 
-  // Reexecuta specs instáveis (ex.: oscilação de rede) apenas em modo headless.
   retries: {
     runMode: 1,
     openMode: 0,
   },
 
-  // Suíte de API não precisa de vídeo/screenshots.
   video: false,
   screenshotOnRunFailure: false,
 
   e2e: {
-    specPattern: "cypress/tests/**/*.cy.{js,jsx,ts,tsx}",
+    specPattern: [
+      "cypress/tests/API/**/*.cy.{js,jsx,ts,tsx}",
+      "cypress/tests/E2E/**/*.cy.{js,jsx,ts,tsx}",
+      "cypress/tests/cucumber/features/**/*.feature",
+    ],
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents(on, config) {
-      // Local para listeners de eventos do Node, se necessário.
+      on("file:preprocessor", cucumber());
       return config;
     },
   },

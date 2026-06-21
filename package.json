@@ -7,13 +7,19 @@
     "cy:run": "cypress run",
     "test": "cypress run",
     "test:api": "cypress run --spec \"cypress/tests/API/**/*.cy.js\"",
-    "test:e2e": "cypress run --spec \"cypress/tests/E2E/**/*.cy.js\""
+    "test:e2e": "cypress run --spec \"cypress/tests/E2E/**/*.cy.js\"",
+    "test:cucumber": "cypress run --spec \"cypress/tests/cucumber/features/**/*.feature\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "cypress": "^15.17.0"
+    "cypress": "^15.17.0",
+    "cypress-cucumber-preprocessor": "^4.3.1"
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": false,
+    "step_definitions": "cypress/tests/cucumber/step_definitions/"
   }
 }
