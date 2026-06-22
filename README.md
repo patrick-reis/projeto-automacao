@@ -175,3 +175,60 @@ globais são apontados em `package.json`
 A API da reqres.in exige o header `x-api-key`. A chave padrão está definida em
 `cypress.config.js` (`env.apiKey`) e é injetada automaticamente pelo comando
 `cy.apiRequest`. Para os cenários negativos de autenticação, use `auth: false`.
+
+## 🚀 Teste de carga (k6)
+
+Além da suíte funcional (Cypress), o projeto inclui um **teste de carga** escrito
+em [k6](https://k6.io/) que estressa o endpoint público
+`GET https://gutendex.com/books?ids=11` da [Gutendex](https://gutendex.com/).
+
+O script fica em [`k6/tests/books-load.js`](k6/tests/books-load.js) e gera um
+relatório HTML em `k6/reports/books-load.html` (via
+[k6-reporter](https://github.com/benc-uk/k6-reporter)) ao final da execução.
+
+```bash
+npm run k6:load   # requer o k6 instalado e disponível no PATH
+```
+
+**Perfil de carga** (≈ 7 min no total):
+
+| Estágio   | Duração | Usuários virtuais (VUs) |
+| --------- | ------- | ----------------------- |
+| Ramp-up   | 1 min   | 0 → 250                 |
+| Carga     | 5 min   | 250 → 500 (sustentado)  |
+| Ramp-down | 1 min   | 500 → 0                 |
+
+**Thresholds (critérios de aprovação):**
+
+- `http_req_duration`: **p(95) < 2000 ms** (95% das respostas em até 2s);
+- `http_req_failed`: **rate < 1%** (no máximo 1% de erros).
+
+A cada iteração são validados dois _checks_: o status `200` e se o corpo retornou
+exatamente um livro (`count === 1`).
+
+### 📈 Análise da última execução (2026-06-22)
+
+✅ **Resultado: aprovado** — os **2 thresholds passaram** e **nenhum** foi violado.
+
+| Métrica                 | Valor            | Observação                           |
+| ----------------------- | ---------------- | ------------------------------------ |
+| Requisições totais      | 257.702 (~613/s) | 128.857 iterações (~306/s)           |
+| VUs máximos             | 499              | Pico de carga sustentado             |
+| `http_req_duration` p95 | **32,50 ms**     | ~60x abaixo do limite de 2.000 ms ✅ |
+| `http_req_duration` med | 22,08 ms         | Avg 23,84 ms · Máx 3.292,72 ms       |
+| Requisições com falha   | 12 (**0,00%**)   | Bem abaixo do limite de 1% ✅        |
+| Checks                  | 257.690 ✓ / 24 ✗ | 12 falhas × 2 checks por iteração    |
+| Dados recebidos         | 334,39 MB        | Enviados: 11,79 MB                   |
+
+**Conclusão:**
+
+- O endpoint **sustentou os 500 VUs sem degradação perceptível**: o tempo de
+  resposta mediano ficou em ~22 ms e o p(95) em ~32 ms, muito distante do teto de
+  2 s estabelecido.
+- A **taxa de erro foi baixa** (12 falhas em 257.702 requisições ≈ 0,005%),
+  bem dentro do limite de 1%.
+- As 12 falhas (24 _checks_) são **esporádicas e pontuais**: o tempo máximo de
+  ~3,3 s contrasta com o p(95) de ~32 ms, sugerindo _outliers_ isolados —
+  provavelmente instabilidade transitória da rede/servidor ou _rate limiting_ da
+  API pública sob pico de carga. Não comprometem o resultado, mas valem
+  acompanhamento em execuções futuras.
