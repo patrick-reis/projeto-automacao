@@ -1,5 +1,11 @@
 # Projeto de Automação de Testes — Cypress
 
+[![Testes Automatizados](https://github.com/patrick-reis/projeto-automacao/actions/workflows/tests.yml/badge.svg)](https://github.com/patrick-reis/projeto-automacao/actions/workflows/tests.yml)
+[![Allure Report](https://img.shields.io/badge/Allure%20Report-última%20execução-ee2a4c)](https://patrick-reis.github.io/projeto-automacao/)
+
+> 📊 **[Ver o relatório Allure da última execução »](https://patrick-reis.github.io/projeto-automacao/)**
+> (publicado automaticamente no GitHub Pages a cada execução do workflow no GitHub Actions)
+
 Suíte de testes automatizados escrita em JavaScript com
 [Cypress](https://www.cypress.io/), cobrindo:
 
@@ -87,7 +93,44 @@ Como os resultados são gravados mesmo quando há falhas, é possível rodar
 execução — inclusive as que falharam — para inspecionar o relatório. As pastas
 `allure-results/` e `allure-report/` são ignoradas pelo Git.
 
-## 🥒 Testes BDD (Cucumber + Page Objects)
+## � Integração Contínua (GitHub Actions)
+
+O workflow [`.github/workflows/tests.yml`](.github/workflows/tests.yml) executa
+toda a suíte na nuvem e publica o relatório Allure no **GitHub Pages**, de forma
+que a **última execução** fique sempre acessível pelo badge no topo deste README:
+
+> 📊 **[Ver o relatório Allure da última execução »](https://patrick-reis.github.io/projeto-automacao/)**
+
+### ▶️ Como disparar
+
+É um workflow de **execução manual** (sem parâmetros): acesse a aba **Actions**
+do repositório → **Testes Automatizados** → **Run workflow**.
+
+A cada execução o pipeline:
+
+1. Instala as dependências e o Cypress (com cache) e roda a suíte (`cypress run`);
+2. Converte os resultados (`allure-results/`) em relatório HTML **com histórico**
+   ([`simple-elf/allure-report-action`](https://github.com/simple-elf/allure-report-action));
+3. Publica o relatório na branch `gh-pages`
+   ([`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages)),
+   atualizando o link acima.
+
+> ℹ️ O relatório é publicado mesmo quando há testes falhando (passos com
+> `if: always()`), permitindo investigar as falhas pelo Allure.
+
+### ⚙️ Configuração inicial (uma única vez)
+
+1. **Secret da API** — em **Settings → Secrets and variables → Actions**, crie um
+   secret `CYPRESS_APIKEY` com a chave da [reqres.in](https://reqres.in)
+   (mesmo valor de `apiKey` no seu `cypress.env.json`). Sem ele, os testes de API
+   retornam `401`. O workflow o injeta como `CYPRESS_apiKey`, sobrescrevendo o
+   valor da config.
+2. **GitHub Pages** — rode o workflow uma vez (isso cria a branch `gh-pages`) e
+   então, em **Settings → Pages**, defina **Source: Deploy from a branch** e
+   selecione a branch **`gh-pages`** (pasta `/root`). A partir daí o link do
+   relatório passa a funcionar.
+
+## �🥒 Testes BDD (Cucumber + Page Objects)
 
 A pasta `cypress/tests/cucumber` contém os **mesmos fluxos** de `E2E`, porém com
 uma arquitetura diferente, propositalmente desacoplada da suíte tradicional:

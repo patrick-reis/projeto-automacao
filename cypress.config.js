@@ -9,7 +9,17 @@ const {
 } = require("@badeball/cypress-cucumber-preprocessor/esbuild");
 const cypressOnFix = require("cypress-on-fix");
 const os = require("node:os");
-const cypressEnv = require("./cypress.env.json");
+
+// cypress.env.json não é versionado (está no .gitignore por conter segredos).
+// Localmente ele fornece a apiKey; em CI (GitHub Actions) o arquivo não existe e
+// a apiKey é injetada pela variável de ambiente CYPRESS_apiKey. Por isso o
+// carregamento é tolerante à ausência do arquivo, evitando quebrar a config.
+let cypressEnv = {};
+try {
+  cypressEnv = require("./cypress.env.json");
+} catch {
+  cypressEnv = {};
+}
 
 module.exports = defineConfig({
   // Variáveis de ambiente acessíveis via Cypress.env('...').
