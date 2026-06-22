@@ -14,6 +14,8 @@ Suíte de testes automatizados escrita em JavaScript com
 - **BDD (Cucumber + Page Objects)** — os mesmos fluxos E2E reescritos em Gherkin,
   usando [@badeball/cypress-cucumber-preprocessor](https://github.com/badeball/cypress-cucumber-preprocessor).
 
+**OBS**: Particularmente, ao utilizar Cypress, prefiro trabalhar apenas com custom commands, sem recorrer a Cucumber + Page Objects. Ainda assim, para fins de comparação, disponibilizei as duas opções.
+
 Os resultados de toda a suíte (API, E2E e BDD) são reportados com
 [Allure Report](https://allurereport.org/docs/cypress/).
 
