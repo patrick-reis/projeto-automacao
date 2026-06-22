@@ -5,6 +5,10 @@ name: Testes de Performance (k6)
 on:
   workflow_dispatch:
 
+# Permissão necessária para publicar o relatório na branch gh-pages.
+permissions:
+  contents: write
+
 jobs:
   k6:
     name: k6 - Teste de carga
@@ -23,11 +27,42 @@ jobs:
         with:
           path: k6/tests/books-load.js
 
-      # Publica o relatório HTML como artefato (mesmo se os thresholds falharem).
-      - name: Publicar relatório HTML
+      # Mantém o relatório também como artefato para download (mesmo se os thresholds falharem).
+      - name: Publicar relatório como artefato
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: k6-report
           path: k6/reports/books-load.html
           if-no-files-found: warn
+
+      # Prepara o site do relatório k6 (index.html) para o GitHub Pages.
+      - name: Preparar site do relatório k6
+        if: always()
+        run: |
+          mkdir -p public-k6
+          if [ -f k6/reports/books-load.html ]; then
+            cp k6/reports/books-load.html public-k6/index.html
+          else
+            echo "<h1>Relatório do k6 não foi gerado</h1>" > public-k6/index.html
+          fi
+
+      # Publica o relatório de performance em /performance (destination_dir não apaga /cypress).
+      - name: Publicar relatório de performance no GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: public-k6
+          destination_dir: performance
+
+      # Publica a página inicial (escolha do relatório) na raiz, sem apagar as subpastas.
+      - name: Publicar página inicial no GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: .github/pages
+          keep_files: true

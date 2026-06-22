@@ -32,6 +32,7 @@ jobs:
           path: gh-pages
 
       # Converte os resultados (allure-results) em um relatório HTML com histórico.
+      # subfolder: cypress -> o relatório fica publicado na subpasta /cypress do Pages.
       - name: Gerar relatório Allure (com histórico)
         uses: simple-elf/allure-report-action@v1.14
         if: always()
@@ -40,13 +41,24 @@ jobs:
           allure_report: allure-report
           gh_pages: gh-pages
           allure_history: allure-history
+          subfolder: cypress
 
-      # Publica o relatório no GitHub Pages (branch gh-pages).
-      - name: Publicar relatório no GitHub Pages
+      # Publica o relatório do Cypress em /cypress (destination_dir não apaga /performance).
+      - name: Publicar relatório Cypress no GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history
-          force_orphan: true
+          publish_dir: allure-history/cypress
+          destination_dir: cypress
+
+      # Publica a página inicial (escolha do relatório) na raiz, sem apagar as subpastas.
+      - name: Publicar página inicial no GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: .github/pages
+          keep_files: true
