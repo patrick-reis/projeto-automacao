@@ -1,7 +1,7 @@
 # Projeto de Automação de Testes — Cypress
 
 [![Testes Automatizados](https://github.com/patrick-reis/projeto-automacao/actions/workflows/tests.yml/badge.svg)](https://github.com/patrick-reis/projeto-automacao/actions/workflows/tests.yml)
-[![Allure Report](https://img.shields.io/badge/Allure%20Report-última%20execução-ee2a4c)](https://patrick-reis.github.io/projeto-automacao/)
+[![Allure Report](https://img.shields.io/badge/Allure%20Report-última%20execução-8e44ad)](https://patrick-reis.github.io/projeto-automacao/)
 
 > 📊 **[Ver o relatório Allure da última execução »](https://patrick-reis.github.io/projeto-automacao/)**
 > (publicado automaticamente no GitHub Pages a cada execução do workflow no GitHub Actions)
