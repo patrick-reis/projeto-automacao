@@ -1,0 +1,33 @@
+name: Testes de Performance (k6)
+
+# Execução manual pela aba "Actions" do GitHub.
+# Teste de carga é pesado (~7 min, pico de 500 usuários), por isso não roda a cada push.
+on:
+  workflow_dispatch:
+
+jobs:
+  k6:
+    name: k6 - Teste de carga
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      # Instala o binário do k6 no runner (a run-k6-action não instala o k6).
+      - name: Instalar k6
+        uses: grafana/setup-k6-action@v1
+
+      # Executa o(s) teste(s) de carga da pasta k6/tests.
+      - name: Executar teste de carga
+        uses: grafana/run-k6-action@v1
+        with:
+          path: k6/tests/books-load.js
+
+      # Publica o relatório HTML como artefato (mesmo se os thresholds falharem).
+      - name: Publicar relatório HTML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-report
+          path: k6/reports/books-load.html
+          if-no-files-found: warn

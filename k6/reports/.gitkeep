@@ -1,0 +1,2 @@
+# Mantém a pasta de relatórios no versionamento.
+# Os arquivos .html e .json gerados pelo k6 são ignorados (ver .gitignore).

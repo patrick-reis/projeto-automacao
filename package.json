@@ -13,7 +13,8 @@
     "allure:generate": "allure generate allure-results --clean -o allure-report",
     "allure:open": "allure open allure-report",
     "allure:serve": "allure serve allure-results",
-    "test:report": "npm run allure:clean && npm run cy:run && npm run allure:generate && npm run allure:open"
+    "test:report": "npm run allure:clean && npm run cy:run && npm run allure:generate && npm run allure:open",
+    "k6:load": "k6 run k6/tests/books-load.js"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@badeball/cypress-cucumber-preprocessor": "^24.0.1",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
+    "@types/k6": "^2.0.0",
     "allure-commandline": "^2.43.0",
     "allure-cypress": "^3.10.0",
     "cypress": "^15.17.0",

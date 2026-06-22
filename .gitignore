@@ -2,3 +2,7 @@ node_modules
 cypress.env.json
 allure-results
 allure-report
+
+# k6 — relatórios gerados (a pasta é mantida via .gitkeep)
+k6/reports/*.html
+k6/reports/*.json
