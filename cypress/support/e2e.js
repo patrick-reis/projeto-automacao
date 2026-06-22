@@ -15,3 +15,7 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+
+// Allure Report — instrumenta todos os testes (API, E2E e Cucumber).
+// https://allurereport.org/docs/cypress/
+import 'allure-cypress'

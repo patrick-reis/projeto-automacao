@@ -6,7 +6,10 @@ Suíte de testes automatizados escrita em JavaScript com
 - **API (REST)** da [reqres.in](https://reqres.in);
 - **E2E (UI)** do [SauceDemo](https://www.saucedemo.com/) — fluxos de login e checkout;
 - **BDD (Cucumber + Page Objects)** — os mesmos fluxos E2E reescritos em Gherkin,
-  usando [cypress-cucumber-preprocessor](https://www.npmjs.com/package/cypress-cucumber-preprocessor).
+  usando [@badeball/cypress-cucumber-preprocessor](https://github.com/badeball/cypress-cucumber-preprocessor).
+
+Os resultados de toda a suíte (API, E2E e BDD) são reportados com
+[Allure Report](https://allurereport.org/docs/cypress/).
 
 ## 📁 Estrutura
 
@@ -58,6 +61,32 @@ npm run test:e2e     # executa apenas os testes da pasta cypress/tests/E2E
 npm run test:cucumber # executa apenas os testes BDD (.feature) da pasta cypress/tests/cucumber
 ```
 
+## 📊 Relatório Allure
+
+A suíte é instrumentada pelo [Allure Report](https://allurereport.org/docs/cypress/)
+(lib `allure-cypress`). Cada execução do Cypress grava os resultados na pasta
+`allure-results/`, e a CLI converte esses resultados em um relatório HTML em
+`allure-report/`.
+
+> ⚠️ A CLI do Allure (`allure-commandline`) **requer Java (JRE 8+)** instalado e
+> disponível no `PATH`.
+
+```bash
+npm run test:report   # limpa, executa toda a suíte, gera e abre o relatório
+
+# Ou passo a passo:
+npm run allure:clean    # remove allure-results/ e allure-report/
+npm run cy:run          # executa os testes (gera allure-results/)
+npm run allure:generate # gera o HTML em allure-report/
+npm run allure:open     # abre o relatório já gerado
+npm run allure:serve    # gera um relatório temporário e abre direto de allure-results/
+```
+
+Como os resultados são gravados mesmo quando há falhas, é possível rodar
+`npm run allure:serve` (ou `allure:generate` + `allure:open`) após qualquer
+execução — inclusive as que falharam — para inspecionar o relatório. As pastas
+`allure-results/` e `allure-report/` são ignoradas pelo Git.
+
 ## 🥒 Testes BDD (Cucumber + Page Objects)
 
 A pasta `cypress/tests/cucumber` contém os **mesmos fluxos** de `E2E`, porém com
@@ -71,11 +100,14 @@ uma arquitetura diferente, propositalmente desacoplada da suíte tradicional:
   `cy.addProductToCart`, etc.), os passos do Cucumber chamam apenas os Page Objects
   e comandos nativos do Cypress.
 
-O [cypress-cucumber-preprocessor](https://www.npmjs.com/package/cypress-cucumber-preprocessor)
-é registrado em `cypress.config.js` (`on('file:preprocessor', cucumber())`) e os
-_step definitions_ globais são apontados em `package.json`
-(`cypress-cucumber-preprocessor.step_definitions`). Arquivos `*.cy.js` (API e E2E)
+O [@badeball/cypress-cucumber-preprocessor](https://github.com/badeball/cypress-cucumber-preprocessor)
+é registrado em `cypress.config.js` (via bundler esbuild) e os _step definitions_
+globais são apontados em `package.json`
+(`cypress-cucumber-preprocessor.stepDefinitions`). Arquivos `*.cy.js` (API e E2E)
 **não** passam pelo Cucumber e continuam funcionando normalmente.
+
+> ℹ️ O `cypress-on-fix` é usado para que o Allure e o Cucumber possam escutar os
+> mesmos eventos do Cypress (`after:spec`/`after:run`) sem conflito.
 
 ## ✅ Boas práticas aplicadas
 

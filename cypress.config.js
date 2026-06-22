@@ -1,6 +1,15 @@
 const { defineConfig } = require("cypress");
+const { allureCypress } = require("allure-cypress/reporter");
+const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
+const {
+  addCucumberPreprocessorPlugin,
+} = require("@badeball/cypress-cucumber-preprocessor");
+const {
+  createEsbuildPlugin,
+} = require("@badeball/cypress-cucumber-preprocessor/esbuild");
+const cypressOnFix = require("cypress-on-fix");
+const os = require("node:os");
 const cypressEnv = require("./cypress.env.json");
-const cucumber = require("cypress-cucumber-preprocessor").default;
 
 module.exports = defineConfig({
   // Variáveis de ambiente acessíveis via Cypress.env('...').
@@ -32,8 +41,32 @@ module.exports = defineConfig({
       "cypress/tests/cucumber/features/**/*.feature",
     ],
     supportFile: "cypress/support/e2e.js",
-    setupNodeEvents(on, config) {
-      on("file:preprocessor", cucumber());
+    async setupNodeEvents(on, config) {
+      // cypress-on-fix permite que vários plugins escutem os mesmos eventos
+      // (after:spec/after:run do Allure + Cucumber) sem conflito.
+      on = cypressOnFix(on);
+
+      // Cucumber (.feature) com bundler esbuild — suporta sintaxe JS moderna,
+      // necessária para o allure-cypress.
+      await addCucumberPreprocessorPlugin(on, config);
+      on(
+        "file:preprocessor",
+        createBundler({
+          plugins: [createEsbuildPlugin(config)],
+        })
+      );
+
+      // Allure Report (https://allurereport.org/docs/cypress/)
+      // Gera os resultados em "allure-results" para todos os specs (API, E2E e Cucumber).
+      allureCypress(on, config, {
+        resultsDir: "allure-results",
+        environmentInfo: {
+          os_platform: os.platform(),
+          os_release: os.release(),
+          node_version: process.version,
+        },
+      });
+
       return config;
     },
   },
